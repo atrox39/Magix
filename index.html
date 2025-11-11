@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>WASM Image Editor (Rust)</title>
+
+  <!-- ✅ TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: [
+              "ui-sans-serif",
+              "system-ui",
+              "-apple-system",
+              "Segoe UI",
+              "Roboto",
+              "Helvetica Neue",
+              "Arial",
+            ],
+          },
+        },
+      },
+    };
+  </script>
+</head>
+
+<body class="font-sans p-6 bg-gray-50 min-h-screen">
+  <h1 class="text-2xl font-bold mb-6 text-gray-800">
+    WASM Image Editor (Rust)
+  </h1>
+
+  <!-- ✅ Toolbar con Tailwind -->
+  <div class="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-6 items-start">
+    <div class="flex flex-col gap-2">
+      <label class="text-gray-700 font-medium">Cargar imagen</label>
+      <input id="file-input" type="file" accept="image/*"
+        class="block w-full rounded border border-gray-300 p-2 text-gray-700 bg-white cursor-pointer" />
+    </div>
+
+    <button id="btn-gray" class="px-4 py-2 bg-gray-700 text-white rounded shadow hover:bg-gray-800">
+      Escala de grises
+    </button>
+
+    <button id="btn-invert" class="px-4 py-2 bg-indigo-600 text-white rounded shadow hover:bg-indigo-700">
+      Invertir colores
+    </button>
+
+    <div class="flex flex-col gap-3 col-span-full">
+      <label for="brightness" class="text-gray-700 font-medium">
+        Ajustar brillo
+      </label>
+      <div class="flex items-center gap-4">
+        <input id="brightness" type="range" min="-100" max="100" value="0" class="flex-1 cursor-pointer" />
+        <button id="btn-apply-brightness" class="px-4 py-2 bg-amber-600 text-white rounded shadow hover:bg-amber-700">
+          Aplicar
+        </button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-3 col-span-full">
+      <button id="btn-undo" class="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500">
+        Deshacer
+      </button>
+
+      <button id="btn-redo" class="px-4 py-2 bg-gray-400 text-white rounded shadow hover:bg-gray-500">
+        Rehacer
+      </button>
+
+      <button id="btn-export" class="px-4 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700">
+        Exportar PNG
+      </button>
+    </div>
+  </div>
+
+  <!-- ✅ Canvas con Tailwind -->
+  <div class="w-full overflow-auto">
+    <canvas id="canvas" width="0" height="0"
+      class="border border-gray-300 rounded shadow max-w-full h-auto bg-white"></canvas>
+  </div>
+
+  <!-- ✅ Inicializar WASM -->
+  <script type="module">
+    import init, { ImageEditor, EditorConfig } from "./magix.js";
+
+    await init();
+
+    const cfg = new EditorConfig("canvas");
+
+    cfg.file_input_id = "file-input";
+    cfg.gray_button_id = "btn-gray";
+    cfg.invert_button_id = "btn-invert";
+    cfg.brightness_slider_id = "brightness";
+    cfg.brightness_apply_id = "btn-apply-brightness";
+    cfg.undo_button_id = "btn-undo";
+    cfg.redo_button_id = "btn-redo";
+    cfg.export_button_id = "btn-export";
+
+    const editor = new ImageEditor(cfg);
+    editor.leak();
+  </script>
+
+</body>
+
+</html>
